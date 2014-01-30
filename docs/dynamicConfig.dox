@@ -1,0 +1,13 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~vel_x_kp" : \b [double] constant for PID min: 0.0, default: 0.0004, max: 0.001
+- \b "~vel_x_kd" : \b [double] constant for PID min: 0.0, default: 0.00032, max: 0.001
+- \b "~vel_y_kp" : \b [double] constant for PID min: 0.0, default: 0.0003, max: 0.001
+- \b "~vel_y_kd" : \b [double] constant for PID min: 0.0, default: 0.00032, max: 0.001
+- \b "~yaw_kp" : \b [double] constant for PID min: 0.0, default: 0.0, max: 0.01
+- \b "~yaw_kd" : \b [double] constant for PID min: 0.0, default: 0.0, max: 0.01
+- \b "~thrust_kp" : \b [double] constant for PID min: 0.0, default: 0.015, max: 0.1
+- \b "~thrust_kd" : \b [double] constant for PID min: 0.0, default: 0.0, max: 0.005
+

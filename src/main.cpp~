@@ -1,0 +1,124 @@
+//#include <Eigen/Core>
+
+#include <ros/ros.h>
+#include <geometry_msgs/Twist.h>
+#include <ardrone_autonomy/Navdata.h>
+#include <sensor_msgs/Joy.h>
+//#include <vector>
+using namespace std;
+//using namespace Eigen;
+
+
+
+class Tag_follow_class
+{
+
+private:
+  ros::NodeHandle& nh;   // so that we dont make a copy while passing this as reference, and work on this one directly
+  ros::Subscriber joy_sub, nav_sub;  //  subscribing to the joy message and the navdata from the joystick and ardrone topic
+  ros::Publisher vel_pub;        // this will be publishing the command velocity to the drone
+//  ros::Publisher vel_directions; // for later purposes, when i want to show markers on opencv using this array; will define messagetype later
+
+  geometry_msgs::Twist twist;  //the message we use to send command to the drone
+  ros::Time tnow;              // current time as per roscore initialization
+  ros::Duration t_diff;        // duration track of t_diff.  we can sleep and run the loop at the rate we want
+
+  bool joy_automode;           // the flag we use to keep track of the state we are in ,{Manual or Autonomous}
+  float goal_x, goal_y, goal_yaw; // the goal positon for our PID, in our case the center of image (320,160,0)
+
+
+public:
+	
+
+
+	void joy_callback(const sensor_msgs::Joy::ConstPtr& msg)
+	{
+  	cout << "we are in the joy callback"  << endl;
+	//ROS_INFO("I heard: [%u]", nav_msg->tags_width[0]);
+	ROS_INFO("Axis is now at position %f", msg->axes[2]);
+        }       
+
+
+
+	void nav_callback(const ardrone_autonomy::NavdataConstPtr& nav_msg)
+	{
+  	cout << "we are in the nav callback"  << endl;
+  	ROS_INFO("tag width in pixels: [%u]", nav_msg->tags_xc[0]);
+        }       
+
+	
+	void publishtwist()
+	{
+	if(joy_automode)
+      	vel_pub.publish(twist);
+  	}
+
+
+
+
+
+
+
+
+		Tag_follow_class(ros::NodeHandle& nh):nh(nh),joy_automode(true)
+  		{   
+		vel_pub = nh.advertise<geometry_msgs::Twist>("/cmd_velo", 1);
+   		 //reconfigure_server.setCallback(boost::bind(&ArdroneController::onConfig, this, _1, _2));
+    		twist.linear.x = twist.linear.y = twist.linear.z = 0;
+    		twist.angular.x = twist.angular.y = twist.angular.z = 0;
+    		tnow = ros::Time::now();
+
+    		joy_sub = nh.subscribe("/joy", 100, boost::bind(&Tag_follow_class::joy_callback,_1, this));
+    		nav_sub = nh.subscribe("/ardrone/navdata", 100, boost::bind(&Tag_follow_class::nav_callback,_1, this));
+
+  		}
+ 	
+
+//template<class M, class T> ros::Subscriber ros::NodeHandle::subscribe(const string&, uint32_t, void (T::*)(M), T*, const ros::TransportHints&)
+
+
+
+
+
+};
+
+
+/*
+
+void chatterCallback(const ardrone_autonomy::NavdataConstPtr& nav_msg)
+{
+	if(!nav_msg->tags_width.empty())
+	{
+	ROS_INFO("I heard: [%u]", nav_msg->tags_width[0]);
+	ROS_INFO("tag width in pixels: [%u]", nav_msg->tags_xc[0]);
+	}
+
+uint32[] tags_type
+uint32[] tags_xc
+uint32[] tags_yc
+uint32[] tags_width
+uint32[] tags_height
+float32[] tags_orientation
+float32[] tags_distance
+
+}
+*/
+int main(int argc, char **argv)
+{
+        ros::init(argc, argv, "tagfollower");   //we are initializing the node
+  	ros::NodeHandle n;   //  -----------------> we will be creating the nodehandle and the subscribing and all in the class that we create
+  	//ros::Subscriber sub = n.subscribe("/ardrone/navdata", 1000, chatterCallback);
+  	ros::spin();
+	Tag_follow_class  follower(n);      //the class the we have defined above
+
+  	return 0;
+}
+
+
+
+
+
+
+
+
+

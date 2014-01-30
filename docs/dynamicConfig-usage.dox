@@ -1,0 +1,14 @@
+\subsubsection usage Usage
+\verbatim
+<node name="ardrone_tagfollow" pkg="ardrone_tagfollow" type="ardrone_tagfollow">
+  <param name="vel_x_kp" type="double" value="0.0004" />
+  <param name="vel_x_kd" type="double" value="0.00032" />
+  <param name="vel_y_kp" type="double" value="0.0003" />
+  <param name="vel_y_kd" type="double" value="0.00032" />
+  <param name="yaw_kp" type="double" value="0.0" />
+  <param name="yaw_kd" type="double" value="0.0" />
+  <param name="thrust_kp" type="double" value="0.015" />
+  <param name="thrust_kd" type="double" value="0.0" />
+</node>
+\endverbatim
+
